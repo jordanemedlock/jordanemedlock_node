@@ -1,0 +1,4 @@
+﻿.v-grid-line, .h-grid-line {
+    stroke: lightgray;
+    stroke-width: 1px;
+}

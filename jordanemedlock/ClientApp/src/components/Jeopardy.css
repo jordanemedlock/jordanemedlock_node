@@ -1,0 +1,79 @@
+﻿@font-face {
+    font-family: "gyparody";
+    src: url("/gyparody.ttf") format('truetype');
+}
+@font-face {
+    font-family: "Swiss911";
+    src: url("/swiss-911.ttf") format('truetype');
+}
+
+#jeopardy-container {
+    background-color: black;
+    text-transform: uppercase;
+    font-family: Swiss911;
+
+}
+
+.question {
+    height: 160px;
+    background-color: #0000a2;
+    color: #d7a04b;
+    text-align: center;
+    margin: 5px -10px;
+}
+
+.team-row {
+    height: 60px;
+    background-color: #0000a2;
+    color: #F5F5F5;
+    padding-top: 12px;
+    margin: 5px 10px;
+}
+
+.question.unopened {
+    font-size: 56px;
+    font-weight: 500;
+    padding-top: 35px;
+}
+
+h1.jeopardy-header {
+    font-family: gyparody;
+    color: #F5F5F5;
+    text-align: center;
+    font-size: 64px;
+}
+
+h1.question-header {
+    font-family: Swiss911;
+    margin-bottom: 20px;
+}
+h2 {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    color: #F5F5F5;
+    text-align: center;
+}
+.category {
+    height: 100px;
+    background-color: #0000a2;
+    color: #F5F5F5;
+    text-align: center;
+    margin: 15px -10px;
+    font-size: 30px;
+    padding-top: 8px;
+    letter-spacing: 4px;
+}
+
+.modal-content.jeopardy {
+    background-color: #0000a2;
+}
+
+.modal.jeopardy {
+    top: 200px;
+}
+
+.jpdy-btn {
+    border: 1px solid #f5f5f5;
+    color: #f5f5f5;
+    text-align: center;
+}

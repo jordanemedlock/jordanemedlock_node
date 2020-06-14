@@ -1,0 +1,96 @@
+﻿body {
+}
+
+
+.unusable-tile {
+    background-image: url('/FourPersonChess/Blank Tile-1.png');
+}
+
+.dark-tile {
+    background-image: url('/FourPersonChess/Dark Tile-1.png');
+}
+
+.dark-tile:hover {
+    background-image: url('/FourPersonChess/Highlight Tile-1.png'), url('/FourPersonChess/Dark Tile-1.png');
+}
+
+.light-tile {
+    background-image: url('/FourPersonChess/Light Tile-1.png');
+}
+
+.light-tile:hover {
+    background-image: url('/FourPersonChess/Highlight Tile-1.png'), url('/FourPersonChess/Light Tile-1.png');
+}
+
+.pawn {
+    background-image: url('/FourPersonChess/Pawn-1.png')
+}
+
+.knight {
+    background-image: url('/FourPersonChess/Knight-1.png')
+}
+
+.rook {
+    background-image: url('/FourPersonChess/Rook-1.png')
+}
+
+.bishop {
+    background-image: url('/FourPersonChess/Bishop-1.png')
+}
+
+.queen {
+    background-image: url('/FourPersonChess/Queen-1.png')
+}
+
+.king {
+    background-image: url('/FourPersonChess/King-1.png')
+}
+
+.cyan {
+    filter: hue-rotate(180deg) saturate(500%);
+}
+
+.white {
+    filter: saturate(0%) brightness(500%);
+}
+
+.black {
+    filter: grayscale(100%) invert(100%) brightness(50%) contrast(400%);
+}
+
+.possible-destination.light-tile {
+    background-image: url('/FourPersonChess/Accept Indicator-1.png'), url('/FourPersonChess/Light Tile-1.png');
+}
+
+.possible-destination.dark-tile {
+    background-image: url('/FourPersonChess/Accept Indicator-1.png'), url('/FourPersonChess/Dark Tile-1.png');
+}
+
+.source.light-tile, .destination.light-tile {
+    background-image: url('/FourPersonChess/Active Indicator-1.png'), url('/FourPersonChess/Light Tile-1.png');
+}
+
+.source.dark-tile, .destination.dark-tile {
+    background-image: url('/FourPersonChess/Active Indicator-1.png'), url('/FourPersonChess/Dark Tile-1.png');
+}
+
+
+.tile {
+    width: 64px;
+    height: 64px;
+    background-size: cover;
+    -ms-interpolation-mode: nearest-neighbor;
+    image-rendering: pixelated;
+}
+
+.piece {
+    width: 64px;
+    height: 64px;
+    background-size: cover;
+    -ms-interpolation-mode: nearest-neighbor;
+    image-rendering: pixelated;
+}
+
+.four-person-chess td {
+    padding: 0px;
+}
