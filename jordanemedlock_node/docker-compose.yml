@@ -1,0 +1,54 @@
+version: '3'
+services:
+    jordanemedlock_server:
+        container_name: jordanemedlock_server
+        build: 
+            context: .
+            dockerfile: ./server/Dockerfile
+        volumes: 
+            - './server:/app'
+            - './common:/common'
+            - '/app/node_modules'
+        ports:
+            - 3001:3001
+        command: nodemon --legacy-watch --watch server -e js index.js
+
+    jordanemedlock_client:
+        container_name: jordanemedlock_client
+        build: 
+            context: .
+            dockerfile: ./client/Dockerfile
+        tty: true
+        volumes: 
+            - './client:/app'
+            - './common:/common'
+            - '/app/node_modules'
+        ports:
+            - 3000:3000
+        environment:
+            - CHOKIDAR_USEPOLLING=true
+
+    jordanemedlock_mongo:
+        container_name: jordanemedlock_mongo
+        image: mongo
+        environment: 
+            - MONGO_INITDB_DATABASE=jordanemedlock
+            - MONGO_INITDB_ROOT_USERNAME=root_username
+            - MONGO_INITDB_ROOT_PASSWORD=3WRlofaeYI0VDQV
+        volumes:
+            - './db/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro'
+            - ./db/mongo-volume:/data/db
+        ports:
+            - '27017-27019:27017-27019'
+        
+    # jordanemedlock_rabbit:
+    #     container_name: jordanemedlock_rabbit
+    #     image: rabbitmq:3-management
+    #     environment: 
+    #         - RABBITMQ_DEFAULT_USER=jordan
+    #         - RABBITMQ_DEFAULT_PASS=dqHDIf36ETe20LF
+    #     ports:
+    #         - "5672:5672"
+    #         - "15672:15672"
+
+            

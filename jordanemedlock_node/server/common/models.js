@@ -1,8 +1,7 @@
-﻿import React, { Component, useState } from 'react';
 import _ from 'underscore';
-import './FourPersonChess.css';
 
-class Point {
+
+export class Point {
     constructor(x, y) {
         if (!_.isNumber(x) || !_.isNumber(y) || _.isNaN(x) || _.isNaN(x)) {
             throw new TypeError(`${x} or ${y} arent valid numbers in Point`)
@@ -24,9 +23,9 @@ class Point {
     }
 }
 
-class Vector extends Point { } // Aliasing the class
+export class Vector extends Point { } // Aliasing the class
 
-class Direction {
+export class Direction {
     constructor(name, deltas) {
         this.name = name
         this.deltas = deltas
@@ -96,7 +95,7 @@ class Direction {
 //    BLACK: colorValue("")
 //})
 
-class Tile {
+export class Tile {
     constructor(location, usable, empty=true) {
         this.location = location
         this.usable = usable
@@ -122,9 +121,19 @@ class Tile {
     isDarkTile() {
         return (this.location.x + this.location.y) % 2 === 0
     }
+
+    static fromObject(tile) {
+        if (tile.emtpy || !tile.usable) {
+            return new Tile(tile.location, tile.usable, tile.empty);
+        } else if (tile.name) {
+            return Piece.fromObject(tile)
+        } else {
+            throw "I'm confused"
+        }
+    }
 }
 
-class Piece extends Tile {
+export class Piece extends Tile {
     constructor(name, location, color, direction) {
         super(location, true, false);
         this.name = name
@@ -143,9 +152,22 @@ class Piece extends Tile {
     toString() {
         return this.name
     }
+
+    static fromObject(tile) {
+        var constructors = {
+            pawn: Pawn,
+            knight: Knight,
+            bishop: Bishop,
+            rook: Rook,
+            queen: Queen,
+            king: King
+        }
+
+        return constructors[tile.name].prototype.constructor(tile.location, tile.color, tile.direction);
+    }
 }
 
-class Pawn extends Piece {
+export class Pawn extends Piece {
     constructor(location, color, direction) {
         super('pawn', location, color, direction)
         this.hasMoved = false; // pawn moves differently after the first move
@@ -175,7 +197,7 @@ class Pawn extends Piece {
     }
 }
 
-class Knight extends Piece {
+export class Knight extends Piece {
     constructor(location, color, direction) {
         super('knight', location, color, direction)
     }
@@ -221,7 +243,7 @@ const straightLineMoves = (color, directions, distance, location, board) => {
         return ret;
 }
 
-class Bishop extends Piece {
+export class Bishop extends Piece {
     constructor(location, color, direction) {
         super('bishop', location, color, direction)
     }
@@ -231,7 +253,7 @@ class Bishop extends Piece {
     }
 }
 
-class Rook extends Piece {
+export class Rook extends Piece {
     constructor(location, color, direction) {
         super('rook', location, color, direction)
     }
@@ -241,7 +263,7 @@ class Rook extends Piece {
     }
 }
 
-class Queen extends Piece {
+export class Queen extends Piece {
     constructor(location, color, direction) {
         super('queen', location, color, direction)
     }
@@ -251,7 +273,7 @@ class Queen extends Piece {
     }
 }
 
-class King extends Piece {
+export class King extends Piece {
     constructor(location, color, direction) {
         super('king', location, color, direction)
     }
@@ -261,8 +283,9 @@ class King extends Piece {
     }
 }
 
-class Player {
-    constructor(color, direction, swapQueen = false) {
+export class Player {
+    constructor(playerName, color, direction, swapQueen = false) {
+        this.playerName = playerName;
         this.color = color
         this.direction = direction
         this.swapQueen = swapQueen
@@ -289,12 +312,20 @@ const UNUSABLE = "UNUSABLE";
 const EMPTY = "EMPTY";
 
 
-class Board {
+export class Board {
     constructor() {
         this.WIDTH = 14
         this.HEIGHT = 14
 
         this.board = {}
+    }
+
+    static fromObject(board) {
+        const b = Board.prototype.constructor()
+        b.board = _.mapObject(board.board, (key, value) => {
+            return Tile.fromObject(value);
+        });
+        return b;
     }
 
     copy() {
@@ -394,127 +425,29 @@ class Board {
 }
 
 
-const TileComponent = (props) => {
-    if (props.tile.isUnusable()) {
-        return (
-            <div className="unusable-tile tile"></div>
-        )
-    } else {
-        let className = `${ props.tile.isDarkTile() ? 'dark-tile' : 'light-tile'} tile `;
-        className += `${ props.isSource && 'source' } ${ props.isDestination && 'destination' } `;
-        className += `${ props.isPossibleDestination && 'possible-destination' }`;
-        return (
-            <div className={className} onClick={props.onClick}>
-                {props.tile.isNotEmpty() && (
-                    <div className={`piece ${props.tile.name} ${props.tile.color} ${props.tile.direction}`}></div>
-                )}
-            </div>
-        )
-    }
-}
-
-export class FourPersonChess extends Component {
-    constructor(props) {
-        super(props)
-
-        const players = [
-            new Player('cyan', Direction.cardinal.UP),
-            new Player('black', Direction.cardinal.RIGHT),
-            new Player('white', Direction.cardinal.DOWN, true),
-            new Player('red', Direction.cardinal.LEFT, true),
-        ]
-        const board = _.reduce(players, (b, p) => p.initPieces(b), new Board());
-        this.state = {
-            board,
-            players: players,
-            turn: 0,
-            source: null,
-            destination: null,
-            possibleDestinations: {},
-        }
+export class Game {
+    constructor(game) {
+        this.gameNumber = game.gameNumber;
+        this.players = game.players;
+        this.board = Board.fromObject(game.board);
+        this.started = game.started;
+        this.turn = game.turn;
     }
 
-    currentPlayer() {
-        return this.state.players[this.state.turn % this.state.players.length];
+    static fromObject(game) {
+        return Game.prototype.constructor(game);
     }
 
-    componentDidMount() {
-    }
-
-    canSelectPiece(tile) {
-        return tile.color === this.currentPlayer().color;
-    }
-
-    canMoveToTile(tile) {
-        return this.state.possibleDestinations[tile.location.toString()];
-    }
-
-    nextClicked() {
-        this.setState((state) => ({
-            ...state,
-            board: state.board.movePiece(state.source, state.destination),
-            source: null,
-            destination: null, 
-            possibleDestinations: {},
-            turn: state.turn + 1
-        }))
-    }
-
-    tileClicked(location) {
-        const tile = this.state.board.getTile(location, Direction.cardinal.UP)
-        if (this.state.source) {
-            if (this.canMoveToTile(tile)) {
-                this.setState((state) => ({
-                    ...state,
-                    destination: tile
-                }))
-            } else if (tile.isNotEmpty() && this.canSelectPiece(tile)) {
-                this.setState((state) => ({
-                    ...state,
-                    source: tile,
-                    possibleDestinations: tile.possibleDestinations(state.board),
-                    destination: null,
-                }))
-            }
-        } else if (tile.isNotEmpty() && this.canSelectPiece(tile)) { // has a piece there and you can click it 
-            this.setState((state) => ({
-                ...state,
-                source: tile,
-                possibleDestinations: tile.possibleDestinations(state.board),
-                destination: null,
-            }))
-        }
-    }
-
-    render() {
-        return (
-            <div>
-                <table className="four-person-chess">
-                    <tbody>
-                        {_.range(this.state.board.HEIGHT).map(y => (
-                            <tr key={y}>
-                                {_.range(this.state.board.WIDTH).map(x => {
-                                    const point = new Point(x, y)
-                                    return (
-                                        <td key={x}>
-                                            <TileComponent
-                                                tile={this.state.board.getTile(point)}
-                                                onClick={() => this.tileClicked(point)}
-                                                isDarkTile={(x + y) % 2 === 0}
-                                                isSource={this.state.source && this.state.source.location.toString() === point.toString()}
-                                                isDestination={this.state.destination && this.state.destination.location.toString() === point.toString()}
-                                                isPossibleDestination={!_.isUndefined(this.state.possibleDestinations[point.toString()])}
-                                            />
-                                        </td>
-                                    )
-                                })}
-                            </tr>
-                        ))}
-
-                    </tbody>
-                </table>
-                <button onClick={() => this.nextClicked()}>Next</button>
-            </div>
-        )
+    static startGame(gameNumber, playerName) {
+        const player = new Player(playerName, 'cyan', Direction.cardinal.DOWN);
+        return new Game({
+            gameNumber,
+            players: [
+                player
+            ],
+            board: player.initPieces(new Board()),
+            started: false,
+            turn: 0
+        })
     }
 }

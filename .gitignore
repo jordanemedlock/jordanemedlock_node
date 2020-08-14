@@ -1,2 +1,4 @@
 .vs/
 .vscode/
+jordanemedlock_node/db/mongo-volume/
+jordanemedlock_node/server/node_modules/
